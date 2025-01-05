@@ -1,1 +1,1 @@
-# Smartphone-based-RTI-Workflow
+# Smartphone based RTI Workflow
