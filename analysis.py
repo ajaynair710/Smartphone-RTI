@@ -1,4 +1,6 @@
 import os
+import pandas as pd
+import numpy as np
 from dotenv import load_dotenv
 import cv2 as cv
 from src.marker import MarkerDetector
@@ -68,6 +70,30 @@ INTERPOLATION_ALGO = 'rbf'
 INTERPOLATION_SIZE = (48, 48)
 PROGRESS = 1000
 
+def save_light_directions_2d(mlic: MLIC, save_path: str):
+    """
+    Extracts light directions from the MLIC instance and saves them to a CSV file.
+
+    Args:
+        mlic (MLIC): The MLIC instance containing light direction data.
+        save_path (str): Path to save the light directions file.
+    """
+    # Retrieve the light directions from the MLIC instance
+    light_directions = mlic.light_directions  # List[Tuple[float, float]]
+    
+    # Check if light directions are available
+    if light_directions is None or len(light_directions) == 0:
+        print("No light directions found to save.")
+        return
+
+    # Convert the list of tuples to a DataFrame
+    light_directions_df = pd.DataFrame(light_directions, columns=['x', 'y'])
+    
+    # Save the DataFrame to a CSV file
+    light_directions_df.to_csv(save_path, index=False)
+    print(f"Light directions (2D) saved to {save_path}")
+
+
 if __name__ == '__main__':
     # Initialize logger
     logger = FileLogger(file=os.path.join(MLIC_DIR, f'mlic.log'))
@@ -105,6 +131,10 @@ if __name__ == '__main__':
     # Save MLIC results
     mlic_path = os.path.join(MLIC_DIR, 'mlic.pkl')
     mlic.dump(mlic_path, logger=logger)
+
+    # Save light directions to a CSV file
+    light_directions_path = os.path.join(MLIC_DIR, f"{EXP_NAME}_light_directions_2d.csv")
+    save_light_directions_2d(mlic=mlic, save_path=light_directions_path)
 
     # Interpolation
     INTERPOLATION_DIR = os.path.join(OUT_DIR, EXP_NAME, 'interpolation', INTERPOLATION_ALGO)
