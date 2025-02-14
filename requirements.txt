@@ -1,0 +1,8 @@
+numpy
+opencv-python
+ffmpeg-python
+loguru
+matplotlib
+dotenv-python
+ffmpeg
+scipy
